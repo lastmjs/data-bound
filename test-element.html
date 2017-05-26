@@ -5,7 +5,30 @@
 
             this.backgroundColor = 'blue';
             this.width = '100px';
-            this.height = '100px';
+        }
+
+        static get observedAttributes() {
+            return [
+                'height'
+            ];
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            switch(name) {
+                case 'height': {
+                    this.height = newValue;
+                    break;
+                }
+            }
+        }
+
+        set height(val) {
+            this._height = val;
+            this.stateChange();
+        }
+
+        get height() {
+            return this._height;
         }
 
         connectedCallback() {
@@ -14,7 +37,7 @@
 
         stateChange() {
             this.innerHTML = DataBound`
-                <div style="height: ${this.height}; width: ${this.width}; background-color: ${this.backgroundColor}"></div>
+                <div height="500px" style="height: ${this.height}; width: ${this.width}; background-color: ${this.backgroundColor}"></div>
             `;
         }
     }
