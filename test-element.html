@@ -1,0 +1,23 @@
+<script>
+    class TestElement extends HTMLElement {
+        constructor() {
+            super();
+
+            this.backgroundColor = 'blue';
+            this.width = '100px';
+            this.height = '100px';
+        }
+
+        connectedCallback() {
+            this.stateChange();
+        }
+
+        stateChange() {
+            this.innerHTML = DataBound`
+                <div style="height: ${this.height}; width: ${this.width}; background-color: ${this.backgroundColor}"></div>
+            `;
+        }
+    }
+
+    window.customElements.define('test-element', TestElement);
+</script>
