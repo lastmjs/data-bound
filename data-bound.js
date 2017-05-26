@@ -65,6 +65,14 @@ const DataBound = function(strings) {
 
     console.log(dataBindings);
 
+    // this is where the actual data binding occurs
+    dataBindings.forEach((dataBinding) => {
+        dataBinding.element.setAttribute(dataBinding.attributeName, dataBinding.expression); // we set the attribute to get rid of the uuid that we set earlier
+        dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
+    });
+
+    console.dir(div);
+
     //
     // const div = document.createElement('div');
     //
