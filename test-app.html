@@ -1,0 +1,30 @@
+<script>
+    class TestElement extends HTMLElement {
+        constructor() {
+            super();
+
+            this.height = '100px';
+            this.width = '100px';
+        }
+
+        connectedCallback() {
+            this.stateChange();
+
+            setTimeout(() => {
+                this.height = '200px';
+                this.width = '200px';
+                this.stateChange();
+            }, 5000);
+        }
+
+        stateChange() {
+            DataBound`
+                <link rel="import" href="custom-box.html">
+
+                <custom-box height="${this.height}" width="${this.width}"></custom-box>
+            `(this);
+        }
+    }
+
+    window.customElements.define('test-app', TestElement);
+</script>

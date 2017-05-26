@@ -2,93 +2,92 @@
 // create a string with all of the expressions replaced with uuids
 // for each element, loop through all attributes. If the attribute value contains the uuid, store that element and that attribute name to the mapping
 
+let dataBindings;
+
 const DataBound = function(strings) {
     const originalArguments = arguments;
-    const expressions = Array.from(arguments).slice(1)
-    console.log(expressions);
+    return function(component) {
+        const expressions = Array.from(originalArguments).slice(1);
 
-    const elementInfo = expressions.reduce((result, expression) => {
-        const uuid = createUUID();
-        return Object.assign({}, result, {
-            [uuid]: {
-                uuid,
-                expression
-            }
-        });
-    }, {});
+        if (!dataBindings) {
+            console.log('if')
+            const elementInfos = expressions.map((expression) => {
+                const uuid = createUUID();
+                return {
+                    uuid,
+                    expression
+                };
+            });
 
-    const elementInfos = expressions.map((expression) => {
-        const uuid = createUUID();
-        return {
-            uuid,
-            expression
-        };
-    });
+            // const div = document.createElement('div');
+            // div.innerHTML = strings.reduce((result, string, index) => {
+            //     return result + string + (elementInfos[index] ? elementInfos[index].uuid : '');
+            // }, '');
+            // component.appendChild(div);
 
-    console.log(elementInfo)
+            component.innerHTML = strings.reduce((result, string, index) => {
+                return result + string + (elementInfos[index] ? elementInfos[index].uuid : '');
+            }, '');
 
-    const div = document.createElement('div');
+            dataBindings = elementInfos.map((elementInfo) => {
+                const {element, attributeName} = Array.from(component.children).reduce((result, child) => {
+                    const {uuidPresent, attributeName} = Array.from(child.attributes).reduce((result, attribute) => {
+                        const uuidPresent = attribute.value.includes(elementInfo.uuid);
+                        const attributeName = attribute.name;
 
-    div.innerHTML = strings.reduce((result, string, index) => {
-        return result + string + (elementInfos[index] ? elementInfos[index].uuid : '');
-    }, '');
+                        console.dir(attribute)
 
-    const dataBindings = elementInfos.map((elementInfo) => {
-        const {element, attributeName} = Array.from(div.children).reduce((result, child) => {
-            const {uuidPresent, attributeName} = Array.from(child.attributes).reduce((result, attribute) => {
-                const uuidPresent = attribute.value.includes(elementInfo.uuid);
-                const attributeName = attribute.name;
+                        return Object.assign({}, result, {
+                            uuidPresent: uuidPresent ? uuidPresent : result.uuidPresent,
+                            attributeName: uuidPresent ? attributeName : result.attributeName
+                        });
+                    }, {
+                        uuidPresent: null,
+                        attributeName: null
+                    });
 
-                return Object.assign({}, result, {
-                    uuidPresent: uuidPresent ? uuidPresent : result.uuidPresent,
-                    attributeName: uuidPresent ? attributeName : result.attributeName
+                    return Object.assign({}, result, {
+                        element: uuidPresent ? child : result.element,
+                        attributeName: uuidPresent ? attributeName : result.attributeName
+                    });
+                }, {
+                    element: null,
+                    attributeName: null
                 });
-            }, {
-                uuidPresent: null,
-                attributeName: null
+
+                return Object.assign({}, elementInfo, {
+                    element,
+                    attributeName
+                });
             });
-
-            return Object.assign({}, result, {
-                element: uuidPresent ? child : result.element,
-                attributeName: uuidPresent ? attributeName : result.attributeName
+        }
+        else {
+            console.log('else')
+            dataBindings = dataBindings.map((dataBinding, index) => {
+                return Object.assign({}, dataBinding, {
+                    expression: expressions[index]
+                });
             });
-        }, {
-            element: null,
-            attributeName: null
+        }
+
+        console.log('about to set properties again');
+
+        // this is where the actual data binding occurs
+        dataBindings.forEach((dataBinding) => {
+            dataBinding.element.setAttribute(dataBinding.attributeName, dataBinding.expression); // we set the attribute to get rid of the uuid that we set earlier
+            // dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
+            // console.log(dataBinding.element);
+            // setTimeout(() => {
+            //     dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
+            // }, 50);
+            console.log(dataBinding.attributeName);
+            console.log(dataBinding.element.attributeName);
+            console.log(dataBinding.element);
+            dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
+            dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
+            //TODO the property setters are not firing correctly it seems when I set the properties here
         });
-
-        return Object.assign({}, elementInfo, {
-            element,
-            attributeName
-        });
-    });
-
-    console.log(dataBindings);
-
-    // this is where the actual data binding occurs
-    dataBindings.forEach((dataBinding) => {
-        dataBinding.element.setAttribute(dataBinding.attributeName, dataBinding.expression); // we set the attribute to get rid of the uuid that we set earlier
-        dataBinding.element[dataBinding.attributeName] = dataBinding.expression; // now we set the property
-    });
-
-    console.dir(div);
-
-    //
-    // const div = document.createElement('div');
-    //
-    // div.innerHTML = strings.join('');
-    //
-    // Array.from(div.children).forEach((child) => {
-    //     console.log(child.attributes);
-    // });
-    //
-    // // console.log(template.querySelector('div'));
-    //
-    // const dataBoundArguments = arguments;
-
-    // return strings.reduce((result, string, index) => {
-    //     return result + string + (dataBoundArguments[index + 1] ? dataBoundArguments[index + 1] : '');
-    // }, '');
+    };
 };
 
 function createUUID() {

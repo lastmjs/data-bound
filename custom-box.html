@@ -1,0 +1,51 @@
+<script>
+    class CustomBox extends HTMLElement {
+        static get observedAttributes() {
+            return [
+                'height',
+                'width'
+            ];
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            switch(name) {
+                case 'height': {
+                    this.height = newValue;
+                    break;
+                }
+                case 'width': {
+                    this.width = newValue;
+                    break;
+                }
+            }
+        }
+
+        constructor() {
+            super();
+            console.log('constructed');
+        }
+
+        connectedCallback() {
+            console.log('connected');
+        }
+
+        detachedCallback() {
+            console.log('detached');
+        }
+
+        set height(val) {
+            console.log(val);
+            this._monkey = val;
+        }
+
+        get monkey() {
+            return this._monkey;
+        }
+
+        set width(val) {
+            console.log(val);
+        }
+    }
+
+    window.customElements.define('custom-box', CustomBox);
+</script>
