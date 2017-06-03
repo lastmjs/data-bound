@@ -1,30 +1,37 @@
 <script>
-    class TestElement extends HTMLElement {
+    class TestApp extends HTMLElement {
         constructor() {
             super();
 
-            this.height = '100px';
-            this.width = '100px';
+            this.height = '200px';
+            this.width = '300px';
         }
 
         connectedCallback() {
             this.stateChange();
-
-            setTimeout(() => {
-                this.height = '200px';
-                this.width = '200px';
-                this.stateChange();
-            }, 5000);
         }
 
         stateChange() {
             DataBound`
                 <link rel="import" href="custom-box.html">
 
+                <div>
+                    ${this.width}
+                    <div>
+
+                    </div>
+                    <div>
+                        <div id="theDiv">${this.height}</div>
+                    </div>
+                    <div>you</div>
+                    <div>you</div>
+                    ${this.width}
+                </div>
+
                 <custom-box height="${this.height}" width="${this.width}"></custom-box>
             `(this);
         }
     }
 
-    window.customElements.define('test-app', TestElement);
+    window.customElements.define('test-app', TestApp);
 </script>

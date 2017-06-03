@@ -1,5 +1,12 @@
 <script>
     class CustomBox extends HTMLElement {
+        constructor() {
+            super();
+
+            this._height = null;
+            this._width = null;
+        }
+
         static get observedAttributes() {
             return [
                 'height',
@@ -20,30 +27,32 @@
             }
         }
 
-        constructor() {
-            super();
-            console.log('constructed');
-        }
-
         connectedCallback() {
-            console.log('connected');
-        }
-
-        detachedCallback() {
-            console.log('detached');
+            this.stateChange();
         }
 
         set height(val) {
-            console.log(val);
-            this._monkey = val;
+            this._height = val;
+            this.stateChange();
         }
 
-        get monkey() {
-            return this._monkey;
+        get height() {
+            return this._height;
         }
 
         set width(val) {
-            console.log(val);
+            this._width = val;
+            this.stateChange();
+        }
+
+        get width() {
+            return this._width;
+        }
+
+        stateChange() {
+            DataBound`
+                <div style="height: ${this.height}; width: ${this.height}; background-color: blue"></div>
+            `(this);
         }
     }
 
