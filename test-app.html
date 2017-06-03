@@ -3,30 +3,49 @@
         constructor() {
             super();
 
-            this.height = '200px';
-            this.width = '300px';
+            this._height = null;
+            this._width = null;
+        }
+
+        static get observedAttributes() {
+            return [
+                'height',
+                'width'
+            ];
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            this[name] = newValue;
         }
 
         connectedCallback() {
             this.stateChange();
         }
 
+        set height(val) {
+            this._height = val;
+            this.stateChange();
+        }
+
+        get height() {
+            return this._height;
+        }
+
+        set width(val) {
+            this._width = val;
+            this.stateChange();
+        }
+
+        get width() {
+            return this._width;
+        }
+
         stateChange() {
             DataBound`
                 <link rel="import" href="custom-box.html">
 
-                <div>
-                    ${this.width}
-                    <div>
-
-                    </div>
-                    <div>
-                        <div id="theDiv">${this.height}</div>
-                    </div>
-                    <div>you</div>
-                    <div>you</div>
-                    ${this.width}
-                </div>
+                <div>${this.height}</div>
+                <div>${this.width}</div>
 
                 <custom-box height="${this.height}" width="${this.width}"></custom-box>
             `(this);

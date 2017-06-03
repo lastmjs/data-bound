@@ -2,7 +2,6 @@
 // create a string with all of the expressions replaced with uuids
 // for each element, loop through all attributes. If the attribute value contains the uuid, store that element and that attribute name to the mapping
 
-//TODO I need to make the function work for multiple calls from multiple components
 const DataBound = function(strings) {
     let dataBindings;
     const originalArguments = arguments;
@@ -10,6 +9,15 @@ const DataBound = function(strings) {
         const expressions = Array.from(originalArguments).slice(1);
 
         if (!dataBindings) {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    console.log(mutation.type);
+                });
+            });
+            observer.observe(component, {
+                characterData: true
+            });
+
             const elementInfos = expressions.map((expression) => {
                 const uuid = createUUID();
                 return {
